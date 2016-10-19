@@ -1,3 +1,4 @@
+
 //
 //  OneChat.swift
 //  OneChat
@@ -8,7 +9,6 @@
 
 import Foundation
 import XMPPFramework
-import CoreData
 
 public typealias XMPPStreamCompletionHandler = (shouldTrustPeer: Bool?) -> Void
 public typealias OneChatAuthCompletionHandler = (stream: XMPPStream, error: DDXMLElement?) -> Void
@@ -31,19 +31,17 @@ public class OneChat: NSObject {
 	var xmppReconnect: XMPPReconnect?
 	var xmppRosterStorage = XMPPRosterCoreDataStorage()
 	var xmppRoster: XMPPRoster?
-	public var xmppLastActivity: XMPPLastActivity?
 	var xmppvCardStorage: XMPPvCardCoreDataStorage?
 	var xmppvCardTempModule: XMPPvCardTempModule?
 	public var xmppvCardAvatarModule: XMPPvCardAvatarModule?
 	var xmppCapabilitiesStorage: XMPPCapabilitiesCoreDataStorage?
 	var xmppMessageDeliveryRecipts: XMPPMessageDeliveryReceipts?
 	var xmppCapabilities: XMPPCapabilities?
-	var user : XMPPUserCoreDataStorageObject?
+	var user = XMPPUserCoreDataStorageObject()
 	var chats: OneChats?
 	let presenceTest = OnePresence()
 	let messageTest = OneMessage()
 	let rosterTest = OneRoster()
-	let lastActivityTest = OneLastActivity()
 	
 	var customCertEvaluation: Bool?
 	var isXmppConnected: Bool?
@@ -163,8 +161,6 @@ public class OneChat: NSObject {
 		xmppMessageDeliveryRecipts!.autoSendMessageDeliveryReceipts = true
 		xmppMessageDeliveryRecipts!.autoSendMessageDeliveryRequests = true
 		
-		xmppLastActivity = XMPPLastActivity()
-		
 		// Activate xmpp modules
 		xmppReconnect!.activate(xmppStream)
 		xmppRoster!.activate(xmppStream)
@@ -172,7 +168,6 @@ public class OneChat: NSObject {
 		xmppvCardAvatarModule!.activate(xmppStream)
 		xmppCapabilities!.activate(xmppStream)
 		xmppMessageDeliveryRecipts!.activate(xmppStream)
-		xmppLastActivity!.activate(xmppStream)
 		
 		// Add ourself as a delegate to anything we may be interested in
 		xmppStream!.addDelegate(self, delegateQueue: dispatch_get_main_queue())
@@ -186,8 +181,6 @@ public class OneChat: NSObject {
 		
 		xmppStream!.addDelegate(presenceTest, delegateQueue: dispatch_get_main_queue())
 		xmppRoster!.addDelegate(presenceTest, delegateQueue: dispatch_get_main_queue())
-		
-		xmppLastActivity!.addDelegate(lastActivityTest, delegateQueue: dispatch_get_main_queue())
 		
 		// Optional:
 		//
@@ -209,18 +202,16 @@ public class OneChat: NSObject {
 	}
 	
 	private func teardownStream() {
-		xmppStream?.removeDelegate(self)
-		xmppRoster?.removeDelegate(self)
-		xmppLastActivity?.removeDelegate(lastActivityTest)
+		xmppStream!.removeDelegate(self)
+		xmppRoster!.removeDelegate(self)
 		
-		xmppLastActivity?.deactivate()
-		xmppReconnect?.deactivate()
-		xmppRoster?.deactivate()
-		xmppvCardTempModule?.deactivate()
-		xmppvCardAvatarModule?.deactivate()
-		xmppCapabilities?.deactivate()
-		OneMessage.sharedInstance.xmppMessageArchiving?.deactivate()
-		xmppStream?.disconnect()
+		xmppReconnect!.deactivate()
+		xmppRoster!.deactivate()
+		xmppvCardTempModule!.deactivate()
+		xmppvCardAvatarModule!.deactivate()
+		xmppCapabilities!.deactivate()
+		OneMessage.sharedInstance.xmppMessageArchiving!.deactivate()
+		xmppStream!.disconnect()
 		
 		OneMessage.sharedInstance.xmppMessageStorage = nil;
 		xmppStream = nil;
@@ -232,7 +223,6 @@ public class OneChat: NSObject {
 		xmppvCardAvatarModule = nil;
 		xmppCapabilities = nil;
 		xmppCapabilitiesStorage = nil;
-		xmppLastActivity = nil;
 	}
 	
 	// MARK: Connect / Disconnect
@@ -411,6 +401,4 @@ extension OneChat: XMPPStreamDelegate {
 	public func xmppStreamDidDisconnect(sender: XMPPStream, withError error: NSError) {
 		delegate?.oneStreamDidDisconnect(sender, withError: error)
 	}
-    
-    
 }

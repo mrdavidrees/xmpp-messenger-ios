@@ -17,7 +17,7 @@ public class OneRoster: NSObject, NSFetchedResultsControllerDelegate {
 	public var delegate: OneRosterDelegate?
 	public var fetchedResultsControllerVar: NSFetchedResultsController?
 	
-	// MARK: Singleton
+	// MARK: Singletonsen
 	
 	public class var sharedInstance : OneRoster {
 		struct OneRosterSingleton {
@@ -93,6 +93,9 @@ public class OneRoster: NSObject, NSFetchedResultsControllerDelegate {
 	public class func removeUserFromRosterAtIndexPath(indexPath indexPath: NSIndexPath) {
 		let user = userFromRosterAtIndexPath(indexPath: indexPath)
 		sharedInstance.fetchedResultsControllerVar?.managedObjectContext.deleteObject(user)
+        
+        sharedInstance.fetchedResultsControllerVar = nil;
+        sharedInstance.fetchedResultsController()
 	}
 	
 	public func controllerDidChangeContent(controller: NSFetchedResultsController) {
@@ -112,6 +115,33 @@ extension OneRoster: XMPPRosterDelegate {
 		print("List=\(jidList)")
 		
 	}
+	
+	public func sendBuddyRequestTo(username: String) {
+		let presence: DDXMLElement = DDXMLElement.elementWithName("presence") as! DDXMLElement
+		presence.addAttributeWithName("type", stringValue: "subscribe")
+        	presence.addAttributeWithName("to", stringValue: username)
+        	presence.addAttributeWithName("from", stringValue: OneChat.sharedInstance.xmppStream?.myJID.bare())
+        
+		OneChat.sharedInstance.xmppStream?.sendElement(presence)
+    	}
+    	
+    	public func acceptBuddyRequestFrom(username: String) {
+        	let presence: DDXMLElement = DDXMLElement.elementWithName("presence") as! DDXMLElement
+        	presence.addAttributeWithName("to", stringValue: username)
+        	presence.addAttributeWithName("from", stringValue: OneChat.sharedInstance.xmppStream?.myJID.bare())
+        	presence.addAttributeWithName("type", stringValue: "subscribed")
+        	
+        	OneChat.sharedInstance.xmppStream?.sendElement(presence)
+    	}
+    
+    	public func declineBuddyRequestFrom(username: String) {
+        	let presence: DDXMLElement = DDXMLElement.elementWithName("presence") as! DDXMLElement
+        	presence.addAttributeWithName("to", stringValue: username)
+        	presence.addAttributeWithName("from", stringValue: OneChat.sharedInstance.xmppStream?.myJID.bare())
+        	presence.addAttributeWithName("type", stringValue: "unsubscribed")
+
+        	OneChat.sharedInstance.xmppStream?.sendElement(presence)
+    	}
 }
 
 extension OneRoster: XMPPStreamDelegate {

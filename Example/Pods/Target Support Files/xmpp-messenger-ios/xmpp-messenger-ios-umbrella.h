@@ -1,6 +1,4 @@
-#ifdef __OBJC__
 #import <UIKit/UIKit.h>
-#endif
 
 
 FOUNDATION_EXPORT double xmpp_messenger_iosVersionNumber;
