@@ -1,4 +1,6 @@
+#ifdef __OBJC__
 #import <UIKit/UIKit.h>
+#endif
 
 #import "XMPPBandwidthMonitor.h"
 #import "XMPPFramework.h"
@@ -116,9 +118,9 @@
 #import "XMPPCapsCoreDataStorageObject.h"
 #import "XMPPCapsResourceCoreDataStorageObject.h"
 #import "XMPPCapabilities.h"
+#import "XMPPMessageArchivingCoreDataStorage.h"
 #import "XMPPMessageArchiving_Contact_CoreDataObject.h"
 #import "XMPPMessageArchiving_Message_CoreDataObject.h"
-#import "XMPPMessageArchivingCoreDataStorage.h"
 #import "XMPPMessageArchiving.h"
 #import "XMPPvCardAvatarModule.h"
 #import "NSDate+XMPPDateTimeProfiles.h"

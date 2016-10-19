@@ -131,9 +131,9 @@ public class OneChat: NSObject {
 		// The XMPPRoster will automatically integrate with XMPPvCardAvatarModule to cache roster photos in the roster.
 		
 		xmppvCardStorage = XMPPvCardCoreDataStorage.sharedInstance()
-    xmppvCardTempModule = XMPPvCardTempModule(vCardStorage: xmppvCardStorage)
-    xmppvCardAvatarModule = XMPPvCardAvatarModule(vCardTempModule: xmppvCardTempModule)
-    
+		xmppvCardTempModule = XMPPvCardTempModule(vCardStorage: xmppvCardStorage)
+		xmppvCardAvatarModule = XMPPvCardAvatarModule(vCardTempModule: xmppvCardTempModule)
+		
 		// Setup capabilities
 		//
 		// The XMPPCapabilities module handles all the complex hashing of the caps protocol (XEP-0115).
@@ -209,18 +209,18 @@ public class OneChat: NSObject {
 	}
 	
 	private func teardownStream() {
-		xmppStream!.removeDelegate(self)
-		xmppRoster!.removeDelegate(self)
-		xmppLastActivity!.removeDelegate(lastActivityTest)
+		xmppStream?.removeDelegate(self)
+		xmppRoster?.removeDelegate(self)
+		xmppLastActivity?.removeDelegate(lastActivityTest)
 		
-		xmppLastActivity!.deactivate()
-		xmppReconnect!.deactivate()
-		xmppRoster!.deactivate()
-		xmppvCardTempModule!.deactivate()
-		xmppvCardAvatarModule!.deactivate()
-		xmppCapabilities!.deactivate()
-		OneMessage.sharedInstance.xmppMessageArchiving!.deactivate()
-		xmppStream!.disconnect()
+		xmppLastActivity?.deactivate()
+		xmppReconnect?.deactivate()
+		xmppRoster?.deactivate()
+		xmppvCardTempModule?.deactivate()
+		xmppvCardAvatarModule?.deactivate()
+		xmppCapabilities?.deactivate()
+		OneMessage.sharedInstance.xmppMessageArchiving?.deactivate()
+		xmppStream?.disconnect()
 		
 		OneMessage.sharedInstance.xmppMessageStorage = nil;
 		xmppStream = nil;
@@ -411,4 +411,6 @@ extension OneChat: XMPPStreamDelegate {
 	public func xmppStreamDidDisconnect(sender: XMPPStream, withError error: NSError) {
 		delegate?.oneStreamDidDisconnect(sender, withError: error)
 	}
+    
+    
 }
